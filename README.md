@@ -41,3 +41,5 @@ The Python version is a complete rewrite aimed at cross-platform compatibility a
 1. Install Python from:  https://www.python.org
 2. Install the required dependencies:  pip install -r requirements.txt
 3. Run:  py main.py
+
+![Screenshot](images/screenshot.png)
