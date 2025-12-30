@@ -42,4 +42,13 @@ The Python version is a complete rewrite aimed at cross-platform compatibility a
 2. Install the required dependencies:  pip install -r requirements.txt
 3. Run:  py main.py
 
+## Usage
+
+1. Create a new tournament or load an existing one.
+2. Generate Bingo cards.
+3. Draw numbers automatically or manually.
+4. Highlighted numbers show which have been drawn.
+5. Export cards or results for sharing.
+
+### Main Window with card and board (non modal windows)
 ![Screenshot](images/screenshot.png)
