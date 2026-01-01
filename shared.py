@@ -26,7 +26,6 @@ def add_number_to_cell(table, row, col, number):
     label = QLabel(str(number))
     label.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
-    # Layout per riempire tutta la cella
     container = QWidget()
     layout = QVBoxLayout(container)
     layout.setContentsMargins(padding_h,padding_v,padding_h,padding_v) # left, top, right, bottom
@@ -35,7 +34,6 @@ def add_number_to_cell(table, row, col, number):
 
     table.setCellWidget(row, col, container)
 
-    # Funzione per ridimensionare il font
     def resize_font(event):
         w = container.width() - (2*padding_h)
         h = container.height() - (2*padding_v)
@@ -52,9 +50,7 @@ def add_number_to_cell(table, row, col, number):
             font_size += 1
         label.setFont(font)
 
-    # Connetti ridimensionamento
     container.resizeEvent = resize_font
-    # Chiama subito per impostare font iniziale
     resize_font(None)
 
 

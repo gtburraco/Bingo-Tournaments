@@ -8,20 +8,15 @@
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
 
-from PySide6.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
-    QMetaObject, QObject, QPoint, QRect,
-    QSize, QTime, QUrl, Qt)
-from PySide6.QtGui import (QAction, QBrush, QColor, QConicalGradient,
-    QCursor, QFont, QFontDatabase, QGradient,
-    QIcon, QImage, QKeySequence, QLinearGradient,
-    QPainter, QPalette, QPixmap, QRadialGradient,
-    QTransform)
-from PySide6.QtWidgets import (QAbstractItemView, QApplication, QFrame, QHBoxLayout,
-    QHeaderView, QLCDNumber, QListView, QListWidget,
-    QListWidgetItem, QMainWindow, QMenu, QMenuBar,
-    QPushButton, QSizePolicy, QSpacerItem, QStatusBar,
-    QTableView, QToolButton, QVBoxLayout, QWidget)
-import resources_rc
+from PySide6.QtCore import (QCoreApplication, QMetaObject, QRect,
+                            QSize)
+from PySide6.QtGui import (QAction, QIcon)
+from PySide6.QtWidgets import (QAbstractItemView, QFrame, QHBoxLayout,
+                               QLCDNumber, QListView, QListWidget,
+                               QMenu, QMenuBar,
+                               QPushButton, QSizePolicy, QSpacerItem, QStatusBar,
+                               QTableView, QToolButton, QVBoxLayout, QWidget)
+
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -118,7 +113,6 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout.addWidget(self.LcdNumber)
 
-
         self.verticalLayout.addLayout(self.horizontalLayout)
 
         self.TableCardsView = QTableView(self.centralwidget)
@@ -186,6 +180,7 @@ class Ui_MainWindow(object):
         self.retranslateUi(MainWindow)
 
         QMetaObject.connectSlotsByName(MainWindow)
+
     # setupUi
 
     def retranslateUi(self, MainWindow):
@@ -193,19 +188,19 @@ class Ui_MainWindow(object):
         self.ActionNewT.setText(QCoreApplication.translate("MainWindow", u"New", None))
         self.ActionLoadT.setText(QCoreApplication.translate("MainWindow", u"Load", None))
         self.ActionGenerate.setText(QCoreApplication.translate("MainWindow", u"Generate Cards", None))
-        self.ActionDeleteExtracetd.setText(QCoreApplication.translate("MainWindow", u"Delete all the drawn numbers", None))
+        self.ActionDeleteExtracetd.setText(
+            QCoreApplication.translate("MainWindow", u"Delete all the drawn numbers", None))
         self.ActionExportCSV.setText(QCoreApplication.translate("MainWindow", u"Export Cards to CSV", None))
         self.ActionExportHtml.setText(QCoreApplication.translate("MainWindow", u"Export Carts to HTML and print", None))
         self.ActionAbout.setText(QCoreApplication.translate("MainWindow", u"About", None))
         self.ActionExit.setText(QCoreApplication.translate("MainWindow", u"Exit", None))
         self.AutomaticDraw.setText(QCoreApplication.translate("MainWindow", u"Automatic\n"
-"Draw", None))
+                                                                            "Draw", None))
         self.ManualDraw.setText(QCoreApplication.translate("MainWindow", u"Manual\n"
-"Draw", None))
+                                                                         "Draw", None))
         self.UndoDraw.setText(QCoreApplication.translate("MainWindow", u"Undo Last\n"
-"Draw", None))
+                                                                       "Draw", None))
         self.ShowBoard.setText(QCoreApplication.translate("MainWindow", u"Board", None))
         self.ViewCardToolButton.setText("")
         self.menuTournament.setTitle(QCoreApplication.translate("MainWindow", u"Tournament", None))
     # retranslateUi
-

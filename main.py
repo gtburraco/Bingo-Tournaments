@@ -18,22 +18,22 @@ from manual_draw import ManualDraw
 from new_tournament import NewTournament
 from print import Print
 from shared import show_error, show_info, show_warning, show_question
-from view_100_25 import View100_25
+from view_board import ViewBoard
+from view_60_20 import View60_20
 from view_75_24 import View75_24
 from view_75_25 import View75_25
-from view_board import ViewBoard
 from view_90_15 import View90_15
+from view_100_25 import View100_25
 
 class MainWindow(QMainWindow, Ui_MainWindow):
     card_non_modal_windows: list[QDialog]
 
     def __init__(self):
         super().__init__()
-
         self.card_non_modal_windows = []
 
         self.setupUi(self)
-
+        self.setWindowTitle(QApplication.applicationName()+" - "+QApplication.applicationVersion())
         self.AutomaticDraw.clicked.connect(self.automatic_draw)
         self.UndoDraw.clicked.connect(self.undo_draw)
         self.ManualDraw.clicked.connect(self.manual_draw)
@@ -132,17 +132,20 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         dialog: Optional[QDialog] = None
 
+        if GV.tournament_type == TournamentType.BINGO_60_20:
+            dialog = View60_20(self, card)
+
         if GV.tournament_type == TournamentType.BINGO_75_24:
             dialog = View75_24(self, card)
 
         if GV.tournament_type == TournamentType.BINGO_75_25:
             dialog = View75_25(self, card)
 
-        if GV.tournament_type == TournamentType.BINGO_100_25:
-            dialog = View100_25(self, card)
-
         if GV.tournament_type == TournamentType.BINGO_90_15:
             dialog = View90_15(self, card)
+
+        if GV.tournament_type == TournamentType.BINGO_100_25:
+            dialog = View100_25(self, card)
 
         if not dialog:
             return
@@ -207,7 +210,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.ActionNewT.setEnabled(False)
 
         except Exception as e:
-            show_error(self, e, "Error load tournament.")
+            show_error(self, e, self.tr("Error load tournament."))
         finally:
             QApplication.restoreOverrideCursor()
 
@@ -257,6 +260,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         for window in self.card_non_modal_windows:
             window.check_cards()
 
+        print(f"Broadcast to  {len(self.card_non_modal_windows)} windows")
+
     ### [ DRAW ] ##################################################################
     def delete_extracted(self):
         if not GV.tournament_extracted_numbers:
@@ -284,6 +289,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.drow_update()
         self.broadcast_highlight()
 
+        print(f"Undo Draw called {num}")
+
     def automatic_draw(self, manual_number=None):
         if not GV.tournament_cards:
             return
@@ -302,8 +309,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if manual_number:
             self.manual_draw()
 
-        # print("Automatic draw called", num)
-        # print(GV.tournament_cards[0])
+        print(f"Draw called {num}")
 
     def manual_draw(self):
         if not GV.tournament_cards:
@@ -313,10 +319,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             return
         num = dialog.get_data()
         if num <= 0 or num > GV.tournament_max_number:
-            show_warning(self, self.tr("Number between 1 and %d" % GV.tournament_max_number))
+            show_warning(self, self.tr("Number between 1 and {numb}").format(numb=GV.tournament_max_number))
             return
         if num in GV.tournament_extracted_numbers:
-            show_warning(self, self.tr("Number %d already draw." % num))
+            show_warning(self, self.tr("Number {numb} already draw.").format(numb=num))
             return
         self.automatic_draw(num)
 
@@ -369,7 +375,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 header = ['ID'] + [f'N{i + 1}' for i in range(GV.tournament_number_in_card)]
                 writer.writerow(header)
 
-                # 3. Scrivi i dati delle cartelle
                 for card in GV.tournament_cards:
                     row = [card.card_id] + card.numbers_grid
                     writer.writerow(row)
@@ -388,13 +393,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     ### [ INFO ] ##################################################################
     def show_info(self):
-        show_info(self, "Version 2.0")
+        show_info(self, QApplication.applicationVersion()+"\nBy GTBurraco")
 
 
 ### [ MAIN ] ##################################################################
 
 def main():
     app = QApplication(sys.argv)
+    app.setApplicationName("Bingo Tournaments")
+    app.setApplicationVersion("2.1")
     window = MainWindow()
     window.show()
     sys.exit(app.exec())

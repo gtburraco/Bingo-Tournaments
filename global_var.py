@@ -9,6 +9,7 @@ from Classes import BaseCard
 
 class TournamentType(Enum):
     NONE = 0
+    BINGO_60_20 = 6020
     BINGO_75_24 = 7524
     BINGO_75_25 = 7525
     BINGO_90_15 = 9015

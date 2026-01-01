@@ -64,6 +64,11 @@ class Ui_NewTournament(object):
 
         self.verticalLayout.addWidget(self.line_2)
 
+        self.RadioButton60_20 = QRadioButton(NewTournament)
+        self.RadioButton60_20.setObjectName(u"RadioButton60_20")
+
+        self.verticalLayout.addWidget(self.RadioButton60_20)
+
         self.RadioButton75_24 = QRadioButton(NewTournament)
         self.RadioButton75_24.setObjectName(u"RadioButton75_24")
         self.RadioButton75_24.setChecked(True)
@@ -106,6 +111,8 @@ class Ui_NewTournament(object):
                                                         "Saving tournament is automatic.", None))
         self.FolderButton.setText(QCoreApplication.translate("NewTournament", u"Browse", None))
         self.FolderChoice.setText("")
+        self.RadioButton60_20.setText(
+            QCoreApplication.translate("NewTournament", u"60 Numbers (20 numbers per card)", None))
         self.RadioButton75_24.setText(
             QCoreApplication.translate("NewTournament", u"75 Numbers (24 numbers per card)", None))
         self.RadioButton75_25.setText(

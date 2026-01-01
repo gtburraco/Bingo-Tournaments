@@ -1,6 +1,7 @@
 import random
 from typing import List
 
+from Classes import Card60_20
 from Classes.card100_25 import Card100_25
 from Classes.card75_24 import Card75_24
 from Classes.card75_25 import Card75_25
@@ -9,11 +10,6 @@ from global_var import GV, TournamentType
 
 
 def generate_tournament_cards(total_needed: int):
-    """
-    Generates the required number of cards in multiples of 3
-    to maintain balanced number distribution.
-    """
-
     all_cards = []
     max_card_id = 0
 
@@ -24,7 +20,12 @@ def generate_tournament_cards(total_needed: int):
 
     print(f"Generating {total_needed} cards, starting from {max_card_id}")
 
-    # Loop to reach at least the total_needed (e.g., 102 for 100 required)
+    if GV.tournament_type == TournamentType.BINGO_60_20:
+        while len(all_cards) < total_needed:
+            block = generate_3_cards_60_20(starting_id=max_card_id)
+            max_card_id += 3
+            all_cards.extend(block)
+
     if GV.tournament_type == TournamentType.BINGO_75_24:
         while len(all_cards) < total_needed:
             block = generate_3_cards_75_24(starting_id=max_card_id)
@@ -67,20 +68,57 @@ def get_non_existent_number(min_val: int, max_val: int, numbers_in_block: List[i
     numbers_in_block.append(chosen)
     return chosen
 
+def generate_3_cards_60_20(starting_id: int) -> List[Card60_20]:
+    card_objects: List[Card60_20] = []
+    block_numbers: List[int] = []
+
+    for i in range(3):
+        card_numbers = [0] * 20
+
+        # ROW 1
+        card_numbers[0] = get_non_existent_number(1, 12, block_numbers)
+        card_numbers[1] = get_non_existent_number(13, 24, block_numbers)
+        card_numbers[2] = get_non_existent_number(25, 36, block_numbers)
+        card_numbers[3] = get_non_existent_number(37, 48, block_numbers)
+        card_numbers[4] = get_non_existent_number(49, 60, block_numbers)
+
+        # ROW 2
+        card_numbers[5] = get_non_existent_number(1, 12, block_numbers)
+        card_numbers[6] = get_non_existent_number(13, 24, block_numbers)
+        card_numbers[7] = get_non_existent_number(25, 36, block_numbers)
+        card_numbers[8] = get_non_existent_number(37, 48, block_numbers)
+        card_numbers[9] = get_non_existent_number(49, 60, block_numbers)
+
+        # ROW 3
+        card_numbers[10] = get_non_existent_number(1, 12, block_numbers)
+        card_numbers[11] = get_non_existent_number(13, 24, block_numbers)
+        card_numbers[12] = get_non_existent_number(25, 36, block_numbers)
+        card_numbers[13] = get_non_existent_number(37, 48, block_numbers)
+        card_numbers[14] = get_non_existent_number(49, 60, block_numbers)
+
+        # ROW 4
+        card_numbers[15] = get_non_existent_number(1, 12, block_numbers)
+        card_numbers[16] = get_non_existent_number(13, 24, block_numbers)
+        card_numbers[17] = get_non_existent_number(25, 36, block_numbers)
+        card_numbers[18] = get_non_existent_number(37, 48, block_numbers)
+        card_numbers[19] = get_non_existent_number(49, 60, block_numbers)
+
+
+        new_card = Card60_20(card_id=starting_id + i, numbers_grid=card_numbers)
+        card_objects.append(new_card)
+
+    missing_count = sum(1 for n in range(1, 61) if n not in block_numbers)
+    if missing_count != 0:
+        raise Exception(f"Generation Error: {missing_count} numbers missing instead of 0")
+
+    return card_objects
 
 def generate_3_cards_75_24(starting_id: int) -> List[Card75_24]:
-    """
-    Generates a block of 3 cards ensuring that 72 out of 75 numbers are used.
-    This follows the C# logic for balanced distribution across cards.
-    """
     card_objects:List[Card75_24] = []
     block_numbers: List[int] = []
 
     for i in range(3):
-        # Initialize the 24-number list for this specific card
         card_numbers = [0] * 24
-
-        # Mapping identical to your C# code (B:1-15, I:16-30, N:31-45, G:46-60, O:61-75)
 
         # ROW 1
         card_numbers[0] = get_non_existent_number(1, 15, block_numbers)
@@ -116,31 +154,21 @@ def generate_3_cards_75_24(starting_id: int) -> List[Card75_24]:
         card_numbers[22] = get_non_existent_number(46, 60, block_numbers)
         card_numbers[23] = get_non_existent_number(61, 75, block_numbers)
 
-        # Instantiate the Card75_24 class with an incremented ID
         new_card = Card75_24(card_id=starting_id + i, numbers_grid=card_numbers)
         card_objects.append(new_card)
 
-    # DEBUG check: Ensure exactly 3 numbers are missing from the 1-75 set
     missing_count = sum(1 for n in range(1, 76) if n not in block_numbers)
     if missing_count != 3:
         raise Exception(f"Generation Error: {missing_count} numbers missing instead of 3")
 
     return card_objects
 
-
 def generate_3_cards_75_25(starting_id: int) -> List[Card75_25]:
-    """
-    Generates a block of 3 cards ensuring that 72 out of 75 numbers are used.
-    This follows the C# logic for balanced distribution across cards.
-    """
     card_objects: List[Card75_25] = []
     block_numbers: List[int] = []
 
     for i in range(3):
-        # Initialize the 25-number list for this specific card
         card_numbers = [0] * 25
-
-        # Mapping identical to your C# code (B:1-15, I:16-30, N:31-45, G:46-60, O:61-75)
 
         # ROW 1
         card_numbers[0] = get_non_existent_number(1, 15, block_numbers)
@@ -177,7 +205,6 @@ def generate_3_cards_75_25(starting_id: int) -> List[Card75_25]:
         card_numbers[23] = get_non_existent_number(46, 60, block_numbers)
         card_numbers[24] = get_non_existent_number(61, 75, block_numbers)
 
-        # Instantiate the Card75_25 class with an incremented ID
         new_card = Card75_25(card_id=starting_id + i, numbers_grid=card_numbers)
         card_objects.append(new_card)
 
@@ -189,18 +216,11 @@ def generate_3_cards_75_25(starting_id: int) -> List[Card75_25]:
 
 
 def generate_4_cards_100_25(starting_id: int) -> List[Card100_25]:
-    """
-    Generates a block of 3 cards ensuring that 72 out of 75 numbers are used.
-    This follows the C# logic for balanced distribution across cards.
-    """
     card_objects: List[Card100_25] = []
     block_numbers: List[int] = []
 
     for i in range(4):
-        # Initialize the 25-number list for this specific card
         card_numbers = [0] * 25
-
-        # Mapping identical to your C# code (B:1-15, I:16-30, N:31-45, G:46-60, O:61-75)
 
         # ROW 1
         card_numbers[0] = get_non_existent_number(1, 20, block_numbers)
@@ -237,7 +257,6 @@ def generate_4_cards_100_25(starting_id: int) -> List[Card100_25]:
         card_numbers[23] = get_non_existent_number(61, 80, block_numbers)
         card_numbers[24] = get_non_existent_number(81, 100, block_numbers)
 
-        # Instantiate the Card100_25 class with an incremented ID
         new_card = Card100_25(card_id=starting_id + i, numbers_grid=card_numbers)
         card_objects.append(new_card)
 
@@ -249,13 +268,8 @@ def generate_4_cards_100_25(starting_id: int) -> List[Card100_25]:
 
 
 def generate_6_cards_90_15(starting_id: int) -> List[Card90_15]:
-    """
-    Generates a block of 3 cards ensuring that 72 out of 75 numbers are used.
-    This follows the C# logic for balanced distribution across cards.
-    """
     card_objects: List[Card90_15] = []
     block_numbers: List[int] = []
-
 
     #################### 1
     card_numbers = [0] * 15

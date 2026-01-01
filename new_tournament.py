@@ -53,6 +53,10 @@ class NewTournament(QDialog, Ui_NewTournament):
 
         GV.tournament_path = self._selected_full_path
 
+        if self.RadioButton60_20.isChecked():
+            GV.tournament_type = TournamentType.BINGO_60_20
+            GV.tournament_max_number = 60
+            GV.tournament_number_in_card = 20
         if self.RadioButton75_24.isChecked():
             GV.tournament_type = TournamentType.BINGO_75_24
             GV.tournament_max_number = 75
