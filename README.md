@@ -52,5 +52,8 @@ The Python version is a complete rewrite aimed at cross-platform compatibility a
 4. Highlighted numbers show which have been drawn.
 5. Export cards or results for sharing.
 
+## Windows binary
+https://github.com/gtburraco/Bingo-Tournaments/releases/tag/v2.1
+
 ### Main Window with card and board (non modal windows)
 ![Screenshot](images/screenshot.png)
