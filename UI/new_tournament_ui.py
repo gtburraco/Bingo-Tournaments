@@ -75,6 +75,11 @@ class Ui_NewTournament(object):
 
         self.verticalLayout.addWidget(self.RadioButton75_24)
 
+        self.RadioButton80_16 = QRadioButton(NewTournament)
+        self.RadioButton80_16.setObjectName(u"RadioButton80_16")
+
+        self.verticalLayout.addWidget(self.RadioButton80_16)
+
         self.RadioButton75_25 = QRadioButton(NewTournament)
         self.RadioButton75_25.setObjectName(u"RadioButton75_25")
 
@@ -115,6 +120,8 @@ class Ui_NewTournament(object):
             QCoreApplication.translate("NewTournament", u"60 Numbers (20 numbers per card)", None))
         self.RadioButton75_24.setText(
             QCoreApplication.translate("NewTournament", u"75 Numbers (24 numbers per card)", None))
+        self.RadioButton80_16.setText(
+            QCoreApplication.translate("NewTournament", u"80 Numbers (16 numbers per card)", None))
         self.RadioButton75_25.setText(
             QCoreApplication.translate("NewTournament", u"75 Numbers (25 numbers per card)", None))
         self.RadioButton90_15.setText(

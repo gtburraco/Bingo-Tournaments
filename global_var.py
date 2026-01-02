@@ -12,6 +12,7 @@ class TournamentType(Enum):
     BINGO_60_20 = 6020
     BINGO_75_24 = 7524
     BINGO_75_25 = 7525
+    BINGO_80_16 = 8016
     BINGO_90_15 = 9015
     BINGO_100_25 = 10025
 

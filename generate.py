@@ -5,11 +5,13 @@ from Classes import Card60_20
 from Classes.card100_25 import Card100_25
 from Classes.card75_24 import Card75_24
 from Classes.card75_25 import Card75_25
+from Classes.card80_16 import Card80_16
 from Classes.card90_15 import Card90_15
 from global_var import GV, TournamentType
+from shared import show_info
 
 
-def generate_tournament_cards(total_needed: int):
+def generate_tournament_cards(total_needed: int) -> int:
     all_cards = []
     max_card_id = 0
 
@@ -17,6 +19,7 @@ def generate_tournament_cards(total_needed: int):
         max_card_id = max(GV.tournament_cards, key=lambda card: card.card_id).card_id
 
     max_card_id += 1
+    start_from = max_card_id
 
     print(f"Generating {total_needed} cards, starting from {max_card_id}")
 
@@ -38,6 +41,12 @@ def generate_tournament_cards(total_needed: int):
             max_card_id += 3
             all_cards.extend(block)
 
+    if GV.tournament_type == TournamentType.BINGO_80_16:
+        while len(all_cards) < total_needed:
+            block = generate_5_cards_80_16(starting_id=max_card_id)
+            max_card_id += 5
+            all_cards.extend(block)
+
     if GV.tournament_type == TournamentType.BINGO_90_15:
         while len(all_cards) < total_needed:
             block = generate_6_cards_90_15(starting_id=max_card_id)
@@ -51,6 +60,7 @@ def generate_tournament_cards(total_needed: int):
             all_cards.extend(block)
 
     GV.tournament_cards.extend(all_cards)
+    return max_card_id - start_from
 
 
 def get_non_existent_number(min_val: int, max_val: int, numbers_in_block: List[int]) -> int:
@@ -214,6 +224,45 @@ def generate_3_cards_75_25(starting_id: int) -> List[Card75_25]:
 
     return card_objects
 
+def generate_5_cards_80_16(starting_id: int) -> List[Card80_16]:
+    card_objects: List[Card80_16] = []
+    block_numbers: List[int] = []
+
+    for i in range(5):
+        card_numbers = [0] * 16
+
+        # ROW 1
+        card_numbers[0] = get_non_existent_number(1, 20, block_numbers)
+        card_numbers[1] = get_non_existent_number(21, 40, block_numbers)
+        card_numbers[2] = get_non_existent_number(41, 60, block_numbers)
+        card_numbers[3] = get_non_existent_number(61, 80, block_numbers)
+
+        # ROW 2
+        card_numbers[4] = get_non_existent_number(1, 20, block_numbers)
+        card_numbers[5] = get_non_existent_number(21, 40, block_numbers)
+        card_numbers[6] = get_non_existent_number(41, 60, block_numbers)
+        card_numbers[7] = get_non_existent_number(61, 80, block_numbers)
+
+        # ROW 3
+        card_numbers[8] = get_non_existent_number(1, 20, block_numbers)
+        card_numbers[9] = get_non_existent_number(21, 40, block_numbers)
+        card_numbers[10] = get_non_existent_number(41, 60, block_numbers)
+        card_numbers[11] = get_non_existent_number(61, 80, block_numbers)
+
+        # ROW 4
+        card_numbers[12] = get_non_existent_number(1, 20, block_numbers)
+        card_numbers[13] = get_non_existent_number(21, 40, block_numbers)
+        card_numbers[14] = get_non_existent_number(41, 60, block_numbers)
+        card_numbers[15] = get_non_existent_number(61, 80, block_numbers)
+
+        new_card = Card80_16(card_id=starting_id + i, numbers_grid=card_numbers)
+        card_objects.append(new_card)
+
+    missing_count = sum(1 for n in range(1, 81) if n not in block_numbers)
+    if missing_count != 0:
+        raise Exception(f"Generation Error: {missing_count} numbers missing instead of 0")
+
+    return card_objects
 
 def generate_4_cards_100_25(starting_id: int) -> List[Card100_25]:
     card_objects: List[Card100_25] = []

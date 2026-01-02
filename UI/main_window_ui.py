@@ -10,7 +10,7 @@
 
 from PySide6.QtCore import (QCoreApplication, QMetaObject, QRect,
                             QSize)
-from PySide6.QtGui import (QAction, QIcon)
+from PySide6.QtGui import (QAction)
 from PySide6.QtWidgets import (QAbstractItemView, QFrame, QHBoxLayout,
                                QLCDNumber, QListView, QListWidget,
                                QMenu, QMenuBar,
@@ -25,45 +25,21 @@ class Ui_MainWindow(object):
         MainWindow.resize(900, 600)
         self.ActionNewT = QAction(MainWindow)
         self.ActionNewT.setObjectName(u"ActionNewT")
-        icon = QIcon()
-        icon.addFile(u":/icons/Icons/svg/file_new.svg", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        self.ActionNewT.setIcon(icon)
         self.ActionLoadT = QAction(MainWindow)
         self.ActionLoadT.setObjectName(u"ActionLoadT")
-        icon1 = QIcon()
-        icon1.addFile(u":/icons/Icons/svg/file_open.svg", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        self.ActionLoadT.setIcon(icon1)
         self.ActionGenerate = QAction(MainWindow)
         self.ActionGenerate.setObjectName(u"ActionGenerate")
         self.ActionGenerate.setEnabled(True)
-        icon2 = QIcon()
-        icon2.addFile(u":/icons/Icons/svg/generate.svg", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        self.ActionGenerate.setIcon(icon2)
         self.ActionDeleteExtracetd = QAction(MainWindow)
         self.ActionDeleteExtracetd.setObjectName(u"ActionDeleteExtracetd")
-        icon3 = QIcon()
-        icon3.addFile(u":/icons/Icons/svg/delete_history.svg", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        self.ActionDeleteExtracetd.setIcon(icon3)
         self.ActionExportCSV = QAction(MainWindow)
         self.ActionExportCSV.setObjectName(u"ActionExportCSV")
-        icon4 = QIcon()
-        icon4.addFile(u":/icons/Icons/svg/csv.svg", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        self.ActionExportCSV.setIcon(icon4)
         self.ActionExportHtml = QAction(MainWindow)
         self.ActionExportHtml.setObjectName(u"ActionExportHtml")
-        icon5 = QIcon()
-        icon5.addFile(u":/icons/Icons/svg/print.svg", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        self.ActionExportHtml.setIcon(icon5)
         self.ActionAbout = QAction(MainWindow)
         self.ActionAbout.setObjectName(u"ActionAbout")
-        icon6 = QIcon()
-        icon6.addFile(u":/icons/Icons/svg/info.svg", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        self.ActionAbout.setIcon(icon6)
         self.ActionExit = QAction(MainWindow)
         self.ActionExit.setObjectName(u"ActionExit")
-        icon7 = QIcon()
-        icon7.addFile(u":/icons/Icons/svg/exit.svg", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        self.ActionExit.setIcon(icon7)
         self.centralwidget = QWidget(MainWindow)
         self.centralwidget.setObjectName(u"centralwidget")
         self.verticalLayout = QVBoxLayout(self.centralwidget)
@@ -126,9 +102,6 @@ class Ui_MainWindow(object):
 
         self.ViewCardToolButton = QToolButton(self.centralwidget)
         self.ViewCardToolButton.setObjectName(u"ViewCardToolButton")
-        icon8 = QIcon()
-        icon8.addFile(u":/icons/Icons/svg/preview.svg", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        self.ViewCardToolButton.setIcon(icon8)
         self.ViewCardToolButton.setIconSize(QSize(24, 24))
 
         self.verticalLayout.addWidget(self.ViewCardToolButton)
@@ -201,6 +174,11 @@ class Ui_MainWindow(object):
         self.UndoDraw.setText(QCoreApplication.translate("MainWindow", u"Undo Last\n"
                                                                        "Draw", None))
         self.ShowBoard.setText(QCoreApplication.translate("MainWindow", u"Board", None))
+        # if QT_CONFIG(tooltip)
+        self.ViewCardToolButton.setToolTip(QCoreApplication.translate("MainWindow",
+                                                                      u"Use double click or button to view card. Multi-select is available.",
+                                                                      None))
+        # endif // QT_CONFIG(tooltip)
         self.ViewCardToolButton.setText("")
         self.menuTournament.setTitle(QCoreApplication.translate("MainWindow", u"Tournament", None))
     # retranslateUi

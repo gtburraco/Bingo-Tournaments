@@ -1,10 +1,11 @@
 import csv
+import os
 import sys
 from random import randint
 from typing import Optional
 
 from PySide6.QtCore import Qt, QStandardPaths, QSize, QEvent
-from PySide6.QtGui import QCloseEvent, QColor, QFont
+from PySide6.QtGui import QCloseEvent, QColor, QFont, QIcon
 from PySide6.QtWidgets import QApplication, QFileDialog, QMainWindow, QDialog, \
     QHeaderView, QLabel, QListWidgetItem
 
@@ -18,12 +19,15 @@ from manual_draw import ManualDraw
 from new_tournament import NewTournament
 from print import Print
 from shared import show_error, show_info, show_warning, show_question
+from view_80_16 import View80_16
 from view_board import ViewBoard
 from view_60_20 import View60_20
 from view_75_24 import View75_24
 from view_75_25 import View75_25
 from view_90_15 import View90_15
 from view_100_25 import View100_25
+
+
 
 class MainWindow(QMainWindow, Ui_MainWindow):
     card_non_modal_windows: list[QDialog]
@@ -34,22 +38,38 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.setupUi(self)
         self.setWindowTitle(QApplication.applicationName()+" - "+QApplication.applicationVersion())
+        self.setWindowIcon(QIcon(resource_path("Icons/ico/Icon.ico")))
         self.AutomaticDraw.clicked.connect(self.automatic_draw)
         self.UndoDraw.clicked.connect(self.undo_draw)
         self.ManualDraw.clicked.connect(self.manual_draw)
         self.ShowBoard.clicked.connect(self.show_board)
 
         self.ActionNewT.triggered.connect(self.open_new_tournament_dialog)
+        self.ActionNewT.setIcon(QIcon(resource_path("Icons/svg/file_new.svg")))
+
         self.ActionLoadT.triggered.connect(self.load_tournament_dialog)
+        self.ActionLoadT.setIcon(QIcon(resource_path("Icons/svg/file_open.svg")))
+
         self.ActionGenerate.triggered.connect(self.generate)
+        self.ActionGenerate.setIcon(QIcon(resource_path("Icons/svg/generate.svg")))
+
         self.ActionDeleteExtracetd.triggered.connect(self.delete_extracted)
+        self.ActionDeleteExtracetd.setIcon(QIcon(resource_path("Icons/svg/delete_history.svg")))
+
         self.ActionExportCSV.triggered.connect(self.export_to_csv)
+        self.ActionExportCSV.setIcon(QIcon(resource_path("Icons/svg/csv.svg")))
+
         self.ActionExportHtml.triggered.connect(self.print)
+        self.ActionExportHtml.setIcon(QIcon(resource_path("Icons/svg/print.svg")))
+
         self.ActionAbout.triggered.connect(self.show_info)
+        self.ActionAbout.setIcon(QIcon(resource_path("Icons/svg/info.svg")))
+
         self.ActionExit.triggered.connect(self.close)
+        self.ActionExit.setIcon(QIcon(resource_path("Icons/svg/exit.svg")))
 
         self.ViewCardToolButton.clicked.connect(self.tool_show_card)
-
+        self.ViewCardToolButton.setIcon(QIcon(resource_path("Icons/svg/preview.svg")))
         self.modelCard = CardsTableModel(GV.tournament_cards, self)
 
         self.TableCardsView.setModel(self.modelCard)
@@ -58,13 +78,19 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.TableCardsView.doubleClicked.connect(self.cards_double_click)
         delegate = FirstColumnDelegate()
         self.TableCardsView.setItemDelegateForColumn(0, delegate)
+
         self.status_cards_number = QLabel("")
+        self.status_cards_number.setToolTip(self.tr("Total number of bingo cards in the game."))
         self.status_file_name = QLabel("")
+        self.status_file_name.setToolTip(self.tr("File name of the tournament."))
         self.status_number_draw = QLabel("")
+        self.status_number_draw.setToolTip(self.tr("Number of drawn numbers."))
+
 
         self.statusBar().addWidget(self.status_cards_number, 0)
         self.statusBar().addWidget(self.status_number_draw, 0)
         self.statusBar().addWidget(self.status_file_name, 1)
+
 
     # TableCardsView FILTER
     def eventFilter(self, source, event):
@@ -106,14 +132,21 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         dialog: Optional[QDialog] = None
 
+        if GV.tournament_max_number == 60:
+            dialog = ViewBoard(self,600,200,6,10)
+
         if GV.tournament_max_number == 75:
             dialog = ViewBoard(self,600,200,5,15)
+
+        if GV.tournament_max_number == 80:
+            dialog = ViewBoard(self, 600, 320, 8, 10)
+
+        if GV.tournament_max_number == 90:
+            dialog = ViewBoard(self, 600, 360, 9, 10)
 
         if GV.tournament_max_number == 100:
             dialog = ViewBoard(self, 600, 400, 10, 10)
 
-        if GV.tournament_max_number == 90:
-            dialog = ViewBoard(self, 600, 360, 9, 10)
 
         if not dialog:
             return
@@ -140,6 +173,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         if GV.tournament_type == TournamentType.BINGO_75_25:
             dialog = View75_25(self, card)
+
+        if GV.tournament_type == TournamentType.BINGO_80_16:
+            dialog = View80_16(self, card)
 
         if GV.tournament_type == TournamentType.BINGO_90_15:
             dialog = View90_15(self, card)
@@ -171,11 +207,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         QApplication.setOverrideCursor(Qt.CursorShape.WaitCursor)
         try:
-            generate.generate_tournament_cards(dialog.get_data())
+            generated = generate.generate_tournament_cards(dialog.get_data())
         finally:
             QApplication.restoreOverrideCursor()
-
+        if  generated:
+            show_info(self,self.tr("Generated {ncards} cards".format(ncards=generated)))
         self.update_and_save()
+
         print(f"Total cards in tournament: {len(GV.tournament_cards)}")
 
     def update_and_save(self):
@@ -397,13 +435,26 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
 
 ### [ MAIN ] ##################################################################
+def resource_path(relative_path) -> str:
+    if hasattr(sys, '_MEIPASS'):
+        base_path = sys._MEIPASS
+    else:
+        base_path = os.path.dirname(os.path.abspath(sys.argv[0]))
+    return str(os.path.join(base_path, relative_path))
 
 def main():
     app = QApplication(sys.argv)
     app.setApplicationName("Bingo Tournaments")
-    app.setApplicationVersion("2.1")
+    app.setApplicationVersion("2.2")
     window = MainWindow()
     window.show()
+    # 🔹 Close splash di PyInstaller
+    if hasattr(sys, "_MEIPASS"):
+        try:
+            import pyi_splash
+            pyi_splash.close()
+        except ImportError:
+            pass
     sys.exit(app.exec())
 
 
