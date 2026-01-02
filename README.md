@@ -3,7 +3,7 @@ Open-source Bingo manager built with Python and PySide6.
 Supports multiple card formats, tournament creation, automatic/manual number draws, live card highlighting, and CSV/HTML export.
 Designed with a clean Model/View architecture for easy extension.
 
-Version 2.1
+Version 2.2
 
 This project is a **free and open-source Python port** of the Windows application  
 **“Bingo Tournament Software”**, originally developed by **the same author**.
@@ -25,6 +25,7 @@ The Python version is a complete rewrite aimed at cross-platform compatibility a
 - 60 numbers card support (20 numbers per card)
 - 75 numbers card support (24 numbers per card, standard Bingo)
 - 75 numbers card support (25 numbers per card)
+- 80 numbers card support (16 numbers per card)
 - 90 numbers card support (15 numbers per card, italian Tombola/Bingo)
 - 100 numbers card support (25 numbers per card)
 - Cross-platform user interface (Qt / PySide6)
