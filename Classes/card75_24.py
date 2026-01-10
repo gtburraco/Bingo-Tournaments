@@ -1,9 +1,11 @@
 from typing import List
+
 from .base_card import BaseCard
 
+
 class Card75_24(BaseCard):
-    def __init__(self, card_id: int, numbers_grid: List[int]):
-        super().__init__(card_id, numbers_grid)
+    def __init__(self, card_id: int, numbers_grid: List[int], invalid: bool = False):
+        super().__init__(card_id, numbers_grid, invalid)
 
     def to_html(self) -> str:
         st = "<td width=\"20%\">"
@@ -12,7 +14,7 @@ class Card75_24(BaseCard):
 
         html = "<table>\n<tbody>\n"
 
-        html += f"<tr><td colspan='5'><b>{self.card_id}</b></td>"+tr
+        html += f"<tr><td colspan='5'><b>{self.card_id}</b></td>" + tr
 
         html += ''.join(st + str(n) + et for n in self.numbers_grid[0:5]) + tr
         html += ''.join(st + str(n) + et for n in self.numbers_grid[5:10]) + tr

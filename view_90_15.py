@@ -1,8 +1,10 @@
-from UI.viewUICard_ui import Ui_ViewUICard
 from PySide6.QtWidgets import QDialog, QHeaderView
+
 from Classes.card90_15 import Card90_15
+from UI.viewUICard_ui import Ui_ViewUICard
 from global_var import GV
 from shared import highlight_numbers, add_number_to_cell
+
 
 class View90_15(QDialog, Ui_ViewUICard):
     def __init__(self, parent, card: Card90_15):
@@ -31,10 +33,9 @@ class View90_15(QDialog, Ui_ViewUICard):
         self.CardWidget.verticalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
 
     def check_cards(self):
-        highlight_numbers(self.CardWidget,GV.tournament_extracted_numbers)
+        highlight_numbers(self.CardWidget, GV.tournament_extracted_numbers)
 
     def closeEvent(self, event):
         if self.main_window and self in self.main_window.card_non_modal_windows:
             self.main_window.card_non_modal_windows.remove(self)
         super().closeEvent(event)
-

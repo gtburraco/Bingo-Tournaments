@@ -5,13 +5,13 @@ from random import randint
 from typing import Optional
 
 from PySide6.QtCore import Qt, QStandardPaths, QSize, QEvent
-from PySide6.QtGui import QCloseEvent, QColor, QFont, QIcon
+from PySide6.QtGui import QCloseEvent, QColor, QFont, QIcon, QIntValidator, QKeyEvent
 from PySide6.QtWidgets import QApplication, QFileDialog, QMainWindow, QDialog, \
     QHeaderView, QLabel, QListWidgetItem
 
 import generate
 from Classes import CardsTableModel
-from Classes.BaseCardModel import FirstColumnDelegate
+from Classes.BaseCardModel import FirstColumnDelegate, StrikeThroughDelegate
 from UI.main_window_ui import Ui_MainWindow
 from generate_choice import GenerateChoice
 from global_var import GV, TournamentType
@@ -19,14 +19,14 @@ from manual_draw import ManualDraw
 from new_tournament import NewTournament
 from print import Print
 from shared import show_error, show_info, show_warning, show_question
-from view_80_16 import View80_16
-from view_board import ViewBoard
+from view_100_25 import View100_25
+from view_30_09 import View30_09
 from view_60_20 import View60_20
 from view_75_24 import View75_24
 from view_75_25 import View75_25
+from view_80_16 import View80_16
 from view_90_15 import View90_15
-from view_100_25 import View100_25
-
+from view_board import ViewBoard
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
@@ -37,7 +37,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.card_non_modal_windows = []
 
         self.setupUi(self)
-        self.setWindowTitle(QApplication.applicationName()+" - "+QApplication.applicationVersion())
+        self.setWindowTitle(QApplication.applicationName() + " - " + QApplication.applicationVersion())
         self.setWindowIcon(QIcon(resource_path("Icons/ico/Icon.ico")))
         self.AutomaticDraw.clicked.connect(self.automatic_draw)
         self.UndoDraw.clicked.connect(self.undo_draw)
@@ -70,14 +70,23 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.ViewCardToolButton.clicked.connect(self.tool_show_card)
         self.ViewCardToolButton.setIcon(QIcon(resource_path("Icons/svg/preview.svg")))
+
+        self.InvalidateCardToolButton.clicked.connect(self.tool_invalidate_card)
+        self.InvalidateCardToolButton.setIcon(QIcon(resource_path("Icons/svg/invalidate.svg")))
+
+        self.SearchCardToolButton.clicked.connect(self.search_card)
+        self.SearchCardToolButton.setIcon(QIcon(resource_path("Icons/svg/search.svg")))
+
         self.modelCard = CardsTableModel(GV.tournament_cards, self)
 
         self.TableCardsView.setModel(self.modelCard)
         self.TableCardsView.verticalHeader().setDefaultAlignment(Qt.AlignmentFlag.AlignCenter)
         self.TableCardsView.installEventFilter(self)
         self.TableCardsView.doubleClicked.connect(self.cards_double_click)
-        delegate = FirstColumnDelegate()
-        self.TableCardsView.setItemDelegateForColumn(0, delegate)
+        delegateFC = FirstColumnDelegate()
+        delegateST = StrikeThroughDelegate()
+        self.TableCardsView.setItemDelegateForColumn(0, delegateFC)
+        self.TableCardsView.setItemDelegate(delegateST)
 
         self.status_cards_number = QLabel("")
         self.status_cards_number.setToolTip(self.tr("Total number of bingo cards in the game."))
@@ -86,17 +95,37 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.status_number_draw = QLabel("")
         self.status_number_draw.setToolTip(self.tr("Number of drawn numbers."))
 
-
         self.statusBar().addWidget(self.status_cards_number, 0)
         self.statusBar().addWidget(self.status_number_draw, 0)
         self.statusBar().addWidget(self.status_file_name, 1)
 
+        self.SearchCards.setValidator(QIntValidator(0, 9999999, self))
+        self.SearchCards.returnPressed.connect(self.search_card)
 
     # TableCardsView FILTER
     def eventFilter(self, source, event):
-        if source == self.TableCardsView and event.type() == QEvent.Type.FocusOut:
+        if source != self.TableCardsView:
+            return super().eventFilter(source, event)
+
+        if event.type() == QEvent.Type.FocusOut:
             self.TableCardsView.clearSelection()
+
+        if event.type() == event.Type.KeyPress and isinstance(event, QKeyEvent):
+            if  Qt.Key.Key_0 <= event.key() <= Qt.Key.Key_9:
+                self.SearchCards.setText(event.text())
+                self.SearchCards.setFocus()
+
         return super().eventFilter(source, event)
+
+    def search_card(self):
+        if not self.SearchCards.text():
+            return
+        row = self.modelCard.find_row_by_id(int(self.SearchCards.text()))
+        self.SearchCards.clear()
+        if row < 0:
+            return
+        self.TableCardsView.selectRow(row)
+        self.TableCardsView.setFocus()
 
     def tool_show_card(self):
         if not GV.tournament_cards:
@@ -109,6 +138,18 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             card = index.data(Qt.ItemDataRole.UserRole)
             self.show_non_modal_card(card)
 
+    def tool_invalidate_card(self):
+        if not GV.tournament_cards:
+            return
+
+        rows = self.TableCardsView.selectionModel().selectedRows()
+
+        for index in rows:
+            card = index.data(Qt.ItemDataRole.UserRole)
+            card.invalid = not card.invalid
+
+        self.TableCardsView.viewport().update()
+        GV.save_to_json()
 
     def cards_double_click(self):
         if not GV.tournament_cards:
@@ -132,11 +173,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         dialog: Optional[QDialog] = None
 
+        if GV.tournament_max_number == 30:
+            dialog = ViewBoard(self, 600, 200, 3, 10)
+
         if GV.tournament_max_number == 60:
-            dialog = ViewBoard(self,600,200,6,10)
+            dialog = ViewBoard(self, 600, 200, 6, 10)
 
         if GV.tournament_max_number == 75:
-            dialog = ViewBoard(self,600,200,5,15)
+            dialog = ViewBoard(self, 600, 200, 5, 15)
 
         if GV.tournament_max_number == 80:
             dialog = ViewBoard(self, 600, 320, 8, 10)
@@ -146,7 +190,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         if GV.tournament_max_number == 100:
             dialog = ViewBoard(self, 600, 400, 10, 10)
-
 
         if not dialog:
             return
@@ -164,6 +207,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 return
 
         dialog: Optional[QDialog] = None
+
+        if GV.tournament_type == TournamentType.BINGO_30_09:
+            dialog = View30_09(self, card)
 
         if GV.tournament_type == TournamentType.BINGO_60_20:
             dialog = View60_20(self, card)
@@ -206,12 +252,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             return
 
         QApplication.setOverrideCursor(Qt.CursorShape.WaitCursor)
+        QApplication.processEvents()
         try:
-            generated = generate.generate_tournament_cards(dialog.get_data())
+            value, no_same_position, no_different_position = dialog.get_data()
+            generated = generate.generate_tournament_cards(value, no_same_position, no_different_position)
         finally:
             QApplication.restoreOverrideCursor()
-        if  generated:
-            show_info(self,self.tr("Generated {ncards} cards".format(ncards=generated)))
+        if generated:
+            show_info(self, self.tr("Generated {ncards} cards".format(ncards=generated)))
         self.update_and_save()
 
         print(f"Total cards in tournament: {len(GV.tournament_cards)}")
@@ -410,11 +458,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         try:
             with open(file_path, mode='w', newline='', encoding='utf-8') as file:
                 writer = csv.writer(file, delimiter=';')
-                header = ['ID'] + [f'N{i + 1}' for i in range(GV.tournament_number_in_card)]
+                header = ['ID'] + ['Invalid'] + [f'N{i + 1}' for i in range(GV.tournament_number_in_card)]
                 writer.writerow(header)
 
                 for card in GV.tournament_cards:
-                    row = [card.card_id] + card.numbers_grid
+                    row = [card.card_id] + [card.invalid] + card.numbers_grid
                     writer.writerow(row)
 
             show_info(self, self.tr("Export completed!"))
@@ -431,7 +479,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     ### [ INFO ] ##################################################################
     def show_info(self):
-        show_info(self, QApplication.applicationVersion()+"\nBy GTBurraco")
+        show_info(self, QApplication.applicationVersion() + "\nBy GTBurraco")
 
 
 ### [ MAIN ] ##################################################################
@@ -442,10 +490,11 @@ def resource_path(relative_path) -> str:
         base_path = os.path.dirname(os.path.abspath(sys.argv[0]))
     return str(os.path.join(base_path, relative_path))
 
+
 def main():
     app = QApplication(sys.argv)
     app.setApplicationName("Bingo Tournaments")
-    app.setApplicationVersion("2.2")
+    app.setApplicationVersion("2.3")
     window = MainWindow()
     window.show()
     # 🔹 Close splash di PyInstaller

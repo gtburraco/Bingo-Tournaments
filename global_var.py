@@ -1,14 +1,15 @@
+import json
 import os
 import random
-from typing import List
 from enum import Enum
-import json
+from typing import List
 
 from Classes import BaseCard
 
 
 class TournamentType(Enum):
     NONE = 0
+    BINGO_30_09 = 3009
     BINGO_60_20 = 6020
     BINGO_75_24 = 7524
     BINGO_75_25 = 7525
@@ -16,13 +17,14 @@ class TournamentType(Enum):
     BINGO_90_15 = 9015
     BINGO_100_25 = 10025
 
+
 class GV:
     tournament_path = None
     tournament_type: TournamentType = TournamentType.NONE
     tournament_max_number: int = 0
     tournament_extracted_numbers: List[int] = []
     tournament_number_in_card: int = 0
-    tournament_cards = [] #BaseCard
+    tournament_cards = []  # BaseCard
 
     @classmethod
     def reset(cls):
@@ -34,15 +36,14 @@ class GV:
         cls.tournament_cards = []
 
     @classmethod
-    def draw_number(cls)-> int:
-        if len(cls.tournament_extracted_numbers)==cls.tournament_max_number:
+    def draw_number(cls) -> int:
+        if len(cls.tournament_extracted_numbers) == cls.tournament_max_number:
             return 0
 
         while True:
             num = random.randint(1, cls.tournament_max_number)
             if num not in GV.tournament_extracted_numbers:
                 return num
-
 
     @classmethod
     def save_to_json(cls):
@@ -84,11 +85,10 @@ class GV:
 
     @classmethod
     def to_dict(cls):
-         return {
+        return {
             "tournament_type": cls.tournament_type.name,  # Save as string (e.g., "BINGO_75_24")
             "tournament_max_number": cls.tournament_max_number,
             "tournament_extracted_numbers": cls.tournament_extracted_numbers,
             "tournament_number_in_card": cls.tournament_number_in_card,
             "tournament_cards": [card.to_dict() for card in cls.tournament_cards]
         }
-

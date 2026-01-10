@@ -1,20 +1,21 @@
-from UI.viewUICard_ui import Ui_ViewUICard
 from PySide6.QtWidgets import QDialog, QHeaderView
-from shared import highlight_numbers, add_number_to_cell
+
+from UI.viewUICard_ui import Ui_ViewUICard
 from global_var import GV
+from shared import highlight_numbers, add_number_to_cell
+
 
 class ViewBoard(QDialog, Ui_ViewUICard):
-    def __init__(self, parent,size_x: int, size_y: int, rows: int, cols: int):
+    def __init__(self, parent, size_x: int, size_y: int, rows: int, cols: int):
         super().__init__(parent)
         self.setupUi(self)
         self.main_window = parent
         self.setWindowTitle(self.tr("Bingo Board"))
-        self.resize(size_x,size_y)
+        self.resize(size_x, size_y)
 
         num = 1
         self.CardWidget.setRowCount(rows)
         self.CardWidget.setColumnCount(cols)
-
 
         for r in range(rows):
             for c in range(cols):

@@ -1,10 +1,12 @@
 from typing import List
+
 from .base_card import BaseCard
 
+
 class Card90_15(BaseCard):
-    def __init__(self, card_id: int, numbers_grid: List[int]):
+    def __init__(self, card_id: int, numbers_grid: List[int], invalid: bool = False):
         # Call the constructor of the parent class (BaseCard)
-        super().__init__(card_id, numbers_grid)
+        super().__init__(card_id, numbers_grid, invalid)
 
     def get_pos_in_range(self, fr: int, to: int, numbers: List[int]) -> str:
         for n in numbers:

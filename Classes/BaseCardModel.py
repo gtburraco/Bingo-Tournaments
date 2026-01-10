@@ -4,8 +4,8 @@ from PySide6.QtCore import QAbstractTableModel, Qt, QModelIndex
 from PySide6.QtGui import QBrush, QColor, QPainter, QPen, QFont
 from PySide6.QtWidgets import QStyledItemDelegate, QStyleOptionViewItem
 
-from Classes import BaseCard
 from global_var import GV
+
 
 class CardsTableModel(QAbstractTableModel):
     HIGHLIGHT_COLOR = QColor("#FFF59D")
@@ -69,7 +69,6 @@ class CardsTableModel(QAbstractTableModel):
         if orientation == Qt.Orientation.Vertical:
             return str(self._cards[section].card_id) if self._cards else None
 
-
         return None
 
     def clear_backgrounds(self):
@@ -79,7 +78,13 @@ class CardsTableModel(QAbstractTableModel):
         bottom_right = self.index(self.rowCount() - 1, self.columnCount() - 1)
         self.dataChanged.emit(top_left, bottom_right, [Qt.ItemDataRole.BackgroundRole, Qt.ItemDataRole.DisplayRole])
 
-    # ✅ Aggiornamento ottimizzato dei numeri estratti
+    def find_row_by_id(self, search_id: int) -> int:
+        # Supponiamo che il Model memorizzi una lista di oggetti 'Sostituzione'
+        for row, card in enumerate(self._cards):
+            if card.card_id == search_id:
+                return row
+        return -1
+
     def notify_number_extracted(self, number: int):
         indexes_to_update = []
         for row, card in enumerate(self._cards):
@@ -87,10 +92,28 @@ class CardsTableModel(QAbstractTableModel):
                 col = card.numbers_grid.index(number) + 1  # colonna 0 = DRAW
                 index = self.index(row, col)
                 indexes_to_update.append(index)
-                break # one number per card
+                break  # one number per card
 
         for index in indexes_to_update:
             self.dataChanged.emit(index, index, [Qt.ItemDataRole.BackgroundRole])
+
+
+class StrikeThroughDelegate(QStyledItemDelegate):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.keyword = "1"
+        self.red_pen = QPen(QColor("red"), 1)
+
+    def paint(self, painter, option, index):
+        super().paint(painter, option, index)
+        user_value: BaseCard = None
+        user_value = index.model().index(index.row(), 0).data(Qt.ItemDataRole.UserRole)
+        if user_value.invalid:
+            painter.save()
+            painter.setPen(self.red_pen)
+            y = option.rect.center().y()
+            painter.drawLine(option.rect.left(), y, option.rect.right(), y)
+            painter.restore()
 
 
 class FirstColumnDelegate(QStyledItemDelegate):

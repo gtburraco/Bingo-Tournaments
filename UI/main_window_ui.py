@@ -12,10 +12,11 @@ from PySide6.QtCore import (QCoreApplication, QMetaObject, QRect,
                             QSize)
 from PySide6.QtGui import (QAction)
 from PySide6.QtWidgets import (QAbstractItemView, QFrame, QHBoxLayout,
-                               QLCDNumber, QListView, QListWidget,
-                               QMenu, QMenuBar,
-                               QPushButton, QSizePolicy, QSpacerItem, QStatusBar,
-                               QTableView, QToolButton, QVBoxLayout, QWidget)
+                               QLCDNumber, QLineEdit, QListView,
+                               QListWidget, QMenu,
+                               QMenuBar, QPushButton, QSizePolicy, QSpacerItem,
+                               QStatusBar, QTableView, QToolButton, QVBoxLayout,
+                               QWidget)
 
 
 class Ui_MainWindow(object):
@@ -73,6 +74,18 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout.addWidget(self.UndoDraw)
 
+        self.SearchCards = QLineEdit(self.centralwidget)
+        self.SearchCards.setObjectName(u"SearchCards")
+        self.SearchCards.setMaximumSize(QSize(80, 16777215))
+        self.SearchCards.setMaxLength(7)
+
+        self.horizontalLayout.addWidget(self.SearchCards)
+
+        self.SearchCardToolButton = QToolButton(self.centralwidget)
+        self.SearchCardToolButton.setObjectName(u"SearchCardToolButton")
+
+        self.horizontalLayout.addWidget(self.SearchCardToolButton)
+
         self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
         self.horizontalLayout.addItem(self.horizontalSpacer)
@@ -100,11 +113,25 @@ class Ui_MainWindow(object):
 
         self.verticalLayout.addWidget(self.TableCardsView)
 
+        self.horizontalLayout_2 = QHBoxLayout()
+        self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
         self.ViewCardToolButton = QToolButton(self.centralwidget)
         self.ViewCardToolButton.setObjectName(u"ViewCardToolButton")
         self.ViewCardToolButton.setIconSize(QSize(24, 24))
 
-        self.verticalLayout.addWidget(self.ViewCardToolButton)
+        self.horizontalLayout_2.addWidget(self.ViewCardToolButton)
+
+        self.InvalidateCardToolButton = QToolButton(self.centralwidget)
+        self.InvalidateCardToolButton.setObjectName(u"InvalidateCardToolButton")
+        self.InvalidateCardToolButton.setIconSize(QSize(24, 24))
+
+        self.horizontalLayout_2.addWidget(self.InvalidateCardToolButton)
+
+        self.horizontalSpacer_2 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+
+        self.horizontalLayout_2.addItem(self.horizontalSpacer_2)
+
+        self.verticalLayout.addLayout(self.horizontalLayout_2)
 
         self.ListNumberDraw = QListWidget(self.centralwidget)
         self.ListNumberDraw.setObjectName(u"ListNumberDraw")
@@ -173,12 +200,21 @@ class Ui_MainWindow(object):
                                                                          "Draw", None))
         self.UndoDraw.setText(QCoreApplication.translate("MainWindow", u"Undo Last\n"
                                                                        "Draw", None))
+        self.SearchCards.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Search card", None))
+        self.SearchCardToolButton.setText("")
         self.ShowBoard.setText(QCoreApplication.translate("MainWindow", u"Board", None))
+        # if QT_CONFIG(tooltip)
+        self.LcdNumber.setToolTip(QCoreApplication.translate("MainWindow", u"The last number drawn", None))
+        # endif // QT_CONFIG(tooltip)
         # if QT_CONFIG(tooltip)
         self.ViewCardToolButton.setToolTip(QCoreApplication.translate("MainWindow",
                                                                       u"Use double click or button to view card. Multi-select is available.",
                                                                       None))
         # endif // QT_CONFIG(tooltip)
         self.ViewCardToolButton.setText("")
+        # if QT_CONFIG(tooltip)
+        self.InvalidateCardToolButton.setToolTip(QCoreApplication.translate("MainWindow", u"Invalidate Cards", None))
+        # endif // QT_CONFIG(tooltip)
+        self.InvalidateCardToolButton.setText("")
         self.menuTournament.setTitle(QCoreApplication.translate("MainWindow", u"Tournament", None))
     # retranslateUi

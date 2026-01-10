@@ -9,8 +9,7 @@
 ################################################################################
 
 from PySide6.QtCore import (QCoreApplication, QMetaObject, QSize, Qt)
-from PySide6.QtWidgets import (QDialogButtonBox,
-                               QLineEdit, QVBoxLayout)
+from PySide6.QtWidgets import (QCheckBox, QDialogButtonBox, QLineEdit, QVBoxLayout)
 
 
 class Ui_GenerateChoice(object):
@@ -29,6 +28,16 @@ class Ui_GenerateChoice(object):
 
         self.verticalLayout.addWidget(self.lineEdit)
 
+        self.SamepositioncheckBox = QCheckBox(GenerateChoice)
+        self.SamepositioncheckBox.setObjectName(u"SamepositioncheckBox")
+
+        self.verticalLayout.addWidget(self.SamepositioncheckBox)
+
+        self.DifferentpositioncheckBox = QCheckBox(GenerateChoice)
+        self.DifferentpositioncheckBox.setObjectName(u"DifferentpositioncheckBox")
+
+        self.verticalLayout.addWidget(self.DifferentpositioncheckBox)
+
         self.buttonBox = QDialogButtonBox(GenerateChoice)
         self.buttonBox.setObjectName(u"buttonBox")
         self.buttonBox.setOrientation(Qt.Orientation.Horizontal)
@@ -46,4 +55,10 @@ class Ui_GenerateChoice(object):
         GenerateChoice.setWindowTitle(QCoreApplication.translate("GenerateChoice", u"Input", None))
         self.lineEdit.setInputMask(QCoreApplication.translate("GenerateChoice", u"9999", None))
         self.lineEdit.setPlaceholderText(QCoreApplication.translate("GenerateChoice", u"Cards to generate", None))
+        self.SamepositioncheckBox.setText(
+            QCoreApplication.translate("GenerateChoice", u"Prevent identical cards (same numbers, same positions)",
+                                       None))
+        self.DifferentpositioncheckBox.setText(QCoreApplication.translate("GenerateChoice",
+                                                                          u"Prevent cards with the same set of numbers, regardless of position",
+                                                                          None))
     # retranslateUi

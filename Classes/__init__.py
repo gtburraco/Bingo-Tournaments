@@ -1,4 +1,5 @@
 from .base_card import BaseCard
+from .card30_09 import Card30_09
 from .card60_20 import Card60_20
 from .card75_24 import Card75_24
 from .card75_25 import Card75_25

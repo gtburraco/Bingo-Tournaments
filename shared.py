@@ -17,7 +17,7 @@ def highlight_numbers(table, numbers_to_highlight) -> List[int]:
                     numbers_highlighted.append(int(label.text()))
                 else:
                     label.setStyleSheet("background-color: none;")
-    return  numbers_highlighted
+    return numbers_highlighted
 
 
 def add_number_to_cell(table, row, col, number):
@@ -28,15 +28,15 @@ def add_number_to_cell(table, row, col, number):
 
     container = QWidget()
     layout = QVBoxLayout(container)
-    layout.setContentsMargins(padding_h,padding_v,padding_h,padding_v) # left, top, right, bottom
-    #layout.setContentsMargins(6, 4, 6, 4)
+    layout.setContentsMargins(padding_h, padding_v, padding_h, padding_v)  # left, top, right, bottom
+    # layout.setContentsMargins(6, 4, 6, 4)
     layout.addWidget(label)
 
     table.setCellWidget(row, col, container)
 
     def resize_font(event):
-        w = container.width() - (2*padding_h)
-        h = container.height() - (2*padding_v)
+        w = container.width() - (2 * padding_h)
+        h = container.height() - (2 * padding_v)
         if w == 0 or h == 0:
             return
         font = QFont()
@@ -80,7 +80,6 @@ def show_warning(parent: QWidget, text: str, details: str = None):
     msg.exec()
 
 
-
 def show_info(parent: QWidget, text: str, details: str = None):
     msg = QMessageBox(
         QMessageBox.Icon.Information,
@@ -93,7 +92,8 @@ def show_info(parent: QWidget, text: str, details: str = None):
         msg.setDetailedText(details)
     msg.exec()
 
+
 def show_question(parent: QWidget, text: str, details: str = None) -> bool:
     return QMessageBox.question(parent, parent.tr("Question"), text,
-            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
-            QMessageBox.StandardButton.No) == QMessageBox.StandardButton.Yes
+                                QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+                                QMessageBox.StandardButton.No) == QMessageBox.StandardButton.Yes

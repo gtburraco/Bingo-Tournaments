@@ -3,11 +3,10 @@ import random
 import webbrowser
 
 from PySide6.QtCore import QStandardPaths
+from PySide6.QtWidgets import QDialog, QFileDialog
 
 from UI.print_ui import Ui_PrintDialog
 from global_var import GV
-from PySide6.QtWidgets import QDialog, QFileDialog
-
 from shared import show_error, show_info
 
 html_head = """<!DOCTYPE html>
@@ -32,6 +31,7 @@ body {
     border: 0px;
     padding: 2mm;
     box-sizing: border-box;
+    break-inside: avoid;
 }
 
 .card table {
@@ -74,6 +74,7 @@ table {
 
 html_footer = """</body>"""
 
+
 class Print(QDialog, Ui_PrintDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -86,7 +87,9 @@ class Print(QDialog, Ui_PrintDialog):
         rows = self.Row_spinBox.value()
         cols = self.Col_spinBox.value()
         font_size = self.Font_spinBox.value()
-        randomness  = self.RandomcheckBox.isChecked()
+        randomness = self.RandomcheckBox.isChecked()
+        print_invalid = self.InvalidcheckBox.isChecked()
+
         if rows <= 0 or cols <= 0 or font_size <= 0:
             return
 
@@ -110,16 +113,27 @@ class Print(QDialog, Ui_PrintDialog):
         html = html.replace("VAR_ROWS", str(rows))
         html = html.replace("VAR_FONT_SIZE", str(font_size))
 
-        #shuffled_cards = random.sample(GV.tournament_cards, len(GV.tournament_cards))
+        new_cards_list = GV.tournament_cards
+
+        ok = [1, 2, 3]
+        ok2 = [1, 2, 3]
+        ok3 = [2, 1, 3]
+        set_current = set(ok)
+        set_other = set(ok3)
+        print(ok == ok2)
+        print(ok == ok3)
+        print(set_current == set_other)
+
         if randomness:
-            new_cards_list = random.sample(GV.tournament_cards, len(GV.tournament_cards))
-        else:
-            new_cards_list = GV.tournament_cards
+            new_cards_list = random.sample(new_cards_list, len(new_cards_list))
+
+        if not print_invalid:
+            new_cards_list = [card for card in new_cards_list if not getattr(card, "invalid", False)]
 
         for i in range(0, len(new_cards_list), cards_per_page):
             html += '<div class="page">\n'
             for card in new_cards_list[i:i + cards_per_page]:
-                html += '<div class="card">'+card.to_html()+'</div>\n'
+                html += '<div class="card">' + card.to_html() + '</div>\n'
             html += '</div>\n'
         html += html_footer
         try:
@@ -127,9 +141,9 @@ class Print(QDialog, Ui_PrintDialog):
                 f.write(html)
 
         except OSError as e:
-            show_error(self,e,self.tr("Error saving file"))
+            show_error(self, e, self.tr("Error saving file"))
         else:
-            show_info(self,self.tr("File saved"))
+            show_info(self, self.tr("File saved"))
             file_url = f"file://{os.path.abspath(file_path)}"
             webbrowser.open(file_url)
             self.accept()

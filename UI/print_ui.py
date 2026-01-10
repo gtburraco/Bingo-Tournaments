@@ -76,6 +76,11 @@ class Ui_PrintDialog(object):
 
         self.verticalLayout.addWidget(self.RandomcheckBox)
 
+        self.InvalidcheckBox = QCheckBox(PrintDialog)
+        self.InvalidcheckBox.setObjectName(u"InvalidcheckBox")
+
+        self.verticalLayout.addWidget(self.InvalidcheckBox)
+
         self.buttonBox = QDialogButtonBox(PrintDialog)
         self.buttonBox.setObjectName(u"buttonBox")
         self.buttonBox.setOrientation(Qt.Orientation.Horizontal)
@@ -95,4 +100,5 @@ class Ui_PrintDialog(object):
         self.label_3.setText(QCoreApplication.translate("PrintDialog", u"Number of row in a page", None))
         self.label.setText(QCoreApplication.translate("PrintDialog", u"Font size (2-14)", None))
         self.RandomcheckBox.setText(QCoreApplication.translate("PrintDialog", u"Random", None))
+        self.InvalidcheckBox.setText(QCoreApplication.translate("PrintDialog", u"Print invalid cards", None))
     # retranslateUi

@@ -2,11 +2,11 @@ import os
 
 from PySide6.QtCore import Qt, QStandardPaths
 from PySide6.QtGui import QFontMetrics
-from PySide6.QtWidgets import QDialog,  QFileDialog
+from PySide6.QtWidgets import QDialog, QFileDialog
 
 from UI.new_tournament_ui import Ui_NewTournament
 from global_var import GV, TournamentType
-from shared import show_warning, show_error
+from shared import show_warning
 
 
 class NewTournament(QDialog, Ui_NewTournament):
@@ -43,16 +43,20 @@ class NewTournament(QDialog, Ui_NewTournament):
 
     def validate_and_accept(self):
         if not self._selected_full_path:
-            show_warning(self,self.tr("Please select a destination file for the tournament."))
+            show_warning(self, self.tr("Please select a destination file for the tournament."))
             return
 
         folder_path = os.path.dirname(self._selected_full_path)
         if not os.path.exists(folder_path):
-            show_warning(self,self.tr("The directory where you want to save the file does not exist."))
+            show_warning(self, self.tr("The directory where you want to save the file does not exist."))
             return
 
         GV.tournament_path = self._selected_full_path
 
+        if self.RadioButton30_09.isChecked():
+            GV.tournament_type = TournamentType.BINGO_30_09
+            GV.tournament_max_number = 30
+            GV.tournament_number_in_card = 9
         if self.RadioButton60_20.isChecked():
             GV.tournament_type = TournamentType.BINGO_60_20
             GV.tournament_max_number = 60
