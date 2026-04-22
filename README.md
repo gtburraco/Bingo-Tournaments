@@ -1,6 +1,8 @@
 # Bingo Tournaments
 Open-source Bingo manager built with Python and PySide6.
-Windows and MacOS Binary provided.
+
+**Windows and MacOS Binary provided.**
+
 Supports multiple card formats, tournament creation, automatic/manual number draws, live card highlighting, and CSV/HTML export.
 Designed with a clean Model/View architecture for easy extension.
 
@@ -11,6 +13,8 @@ This project is a **free and open-source Python port** of the Windows applicatio
 
 Original Windows version (Microsoft Store):  
 https://apps.microsoft.com/detail/9pgmhsxjt7fp
+
+https://www.bingotournamentssoftware.com/
 
 The Python version is a complete rewrite aimed at cross-platform compatibility and open-source distribution.
 
@@ -54,8 +58,8 @@ The Python version is a complete rewrite aimed at cross-platform compatibility a
 4. Highlighted numbers show which have been drawn.
 5. Export cards or results for sharing.
 
-## Windows binary
-https://github.com/gtburraco/Bingo-Tournaments/releases/tag/v2.3
+## Windows/MacOS binary
+https://github.com/gtburraco/Bingo-Tournaments/releases/tag/v2.4
 
 ### Main Window with card and board (non modal windows)
 ![Screenshot](images/screenshot.png)
