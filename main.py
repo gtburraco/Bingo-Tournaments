@@ -1,13 +1,15 @@
 import csv
 import os
 import sys
+import platform
 from random import randint
 from typing import Optional
-
 from PySide6.QtCore import Qt, QStandardPaths, QSize, QEvent
-from PySide6.QtGui import QCloseEvent, QColor, QFont, QIcon, QIntValidator, QKeyEvent
+from PySide6.QtGui import QCloseEvent, QPalette, QColor, QFont, QIcon, QIntValidator, QKeyEvent
 from PySide6.QtWidgets import QApplication, QFileDialog, QMainWindow, QDialog, \
     QHeaderView, QLabel, QListWidgetItem
+from PySide6 import QtSvg, QtSvgWidgets
+
 
 import generate
 from Classes import CardsTableModel
@@ -38,34 +40,50 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.setupUi(self)
         self.setWindowTitle(QApplication.applicationName() + " - " + QApplication.applicationVersion())
-        self.setWindowIcon(QIcon(resource_path("Icons/ico/Icon.ico")))
+        if platform.system() == "Darwin":
+            print("MacOS")
+            ext = ".icns"
+        else:
+            print("Windows")
+            ext = ".ico"
+	
+        self.setWindowIcon(QIcon(resource_path(f"Icons/ico/Icon{ext}")))
         self.AutomaticDraw.clicked.connect(self.automatic_draw)
         self.UndoDraw.clicked.connect(self.undo_draw)
         self.ManualDraw.clicked.connect(self.manual_draw)
         self.ShowBoard.clicked.connect(self.show_board)
 
         self.ActionNewT.triggered.connect(self.open_new_tournament_dialog)
+        self.ActionNewT.setIconVisibleInMenu(True)
         self.ActionNewT.setIcon(QIcon(resource_path("Icons/svg/file_new.svg")))
 
         self.ActionLoadT.triggered.connect(self.load_tournament_dialog)
+        self.ActionLoadT.setIconVisibleInMenu(True)
         self.ActionLoadT.setIcon(QIcon(resource_path("Icons/svg/file_open.svg")))
 
+
         self.ActionGenerate.triggered.connect(self.generate)
+        self.ActionGenerate.setIconVisibleInMenu(True)
         self.ActionGenerate.setIcon(QIcon(resource_path("Icons/svg/generate.svg")))
 
         self.ActionDeleteExtracetd.triggered.connect(self.delete_extracted)
+        self.ActionDeleteExtracetd.setIconVisibleInMenu(True)
         self.ActionDeleteExtracetd.setIcon(QIcon(resource_path("Icons/svg/delete_history.svg")))
 
         self.ActionExportCSV.triggered.connect(self.export_to_csv)
+        self.ActionExportCSV.setIconVisibleInMenu(True)
         self.ActionExportCSV.setIcon(QIcon(resource_path("Icons/svg/csv.svg")))
 
         self.ActionExportHtml.triggered.connect(self.print)
+        self.ActionExportHtml.setIconVisibleInMenu(True)
         self.ActionExportHtml.setIcon(QIcon(resource_path("Icons/svg/print.svg")))
 
         self.ActionAbout.triggered.connect(self.show_info)
+        self.ActionAbout.setIconVisibleInMenu(True)
         self.ActionAbout.setIcon(QIcon(resource_path("Icons/svg/info.svg")))
 
         self.ActionExit.triggered.connect(self.close)
+        self.ActionExit.setIconVisibleInMenu(True)
         self.ActionExit.setIcon(QIcon(resource_path("Icons/svg/exit.svg")))
 
         self.ViewCardToolButton.clicked.connect(self.tool_show_card)
@@ -494,7 +512,23 @@ def resource_path(relative_path) -> str:
 def main():
     app = QApplication(sys.argv)
     app.setApplicationName("Bingo Tournaments")
-    app.setApplicationVersion("2.3")
+    app.setApplicationVersion("2.4")
+	
+    palette = QPalette()
+    palette.setColor(QPalette.Window, QColor(240, 240, 240))
+    palette.setColor(QPalette.WindowText, Qt.black)
+    palette.setColor(QPalette.Base, Qt.white)
+    palette.setColor(QPalette.AlternateBase, QColor(233, 231, 227))
+    palette.setColor(QPalette.ToolTipBase, Qt.white)
+    palette.setColor(QPalette.ToolTipText, Qt.black)
+    palette.setColor(QPalette.Text, Qt.black)
+    palette.setColor(QPalette.Button, QColor(240, 240, 240))
+    palette.setColor(QPalette.ButtonText, Qt.black)
+    palette.setColor(QPalette.BrightText, Qt.red)
+    palette.setColor(QPalette.Highlight, QColor(42, 130, 218))
+    palette.setColor(QPalette.HighlightedText, Qt.white)
+    app.setPalette(palette)
+
     window = MainWindow()
     window.show()
     # 🔹 Close splash di PyInstaller
